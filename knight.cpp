@@ -1,5 +1,4 @@
 #include "knight.h"
-#include "event.h"
 
 void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue)
 {
@@ -17,18 +16,18 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     // Readfile import Knight's properties, events, bag_items.
     knight knight1;
     // HP,level,remedy,maidenkiss,pheonixdown
-    knight1.HP = 152;
-    knight1.level = 1;
+    knight1.HP = 172;
+    knight1.level = 2;
     knight1.remedy = 0;
-    knight1.maidenkiss = 0;
-    knight1.phoenixdown = 0;
+    knight1.maidenkiss = 1;
+    knight1.phoenixdown = 1;
 
     knight1.rescue = -1;
     knight1.MAX_HP = knight1.HP;
     knight1.id = 1; // ENUM
     // input events
     // int event[1000] = {0, 1, 2, 3};
-    int event[] = {11, 6, 7};
+    int event[] = {1, 2, 2, 18, 99};
 
     // Loop all events and return rescue value.
     for (int i = 1; i <= sizeof(event) / sizeof(int); i++)
