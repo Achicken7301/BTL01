@@ -2,7 +2,7 @@
 #define __KNIGHT_H__
 
 #include "main.h"
-
+#include "import.h"
 #define BOWSER_SURRENDER 0
 #define MADBEAR 1
 #define BANDIT 2

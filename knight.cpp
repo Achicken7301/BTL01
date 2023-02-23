@@ -1,4 +1,6 @@
 #include "knight.h"
+#include "import.h"
+const int MAX=10;
 
 void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue)
 {
@@ -12,7 +14,16 @@ void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int
 
 void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &maidenkiss, int &phoenixdown, int &rescue)
 {
-
+    int *kngiht_address[6] = {&HP, &level, &remedy, &maidenkiss, &phoenixdown, &rescue};
+    int* event_address[MAX];  
+    // In proccess
+    rescue=-1;
+  for (int i = 0; i < MAX; i++) {
+        event_address[i] = new int(-1);
+    } 
+    // FIle was import will change value HP,level,remedy,maidenkiss,resuce
+    import(file_input, kngiht_address,event_address);
+    display(HP,level,phoenixdown,maidenkiss,phoenixdown,rescue);
     // Readfile import Knight's properties, events, bag_items.
     knight knight1;
     // HP,level,remedy,maidenkiss,pheonixdown
