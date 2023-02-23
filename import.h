@@ -1,7 +1,6 @@
 #ifndef __IMPORT_H__
 #define __IMPORT_H__
 
-#include "main.h"
 #include "knight.h"
 
 void extract_line(string line, int *array_address[],int array_length);

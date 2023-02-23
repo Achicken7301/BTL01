@@ -1,6 +1,6 @@
 #include "knight.h"
 #include "main.h"
-
+// Get postition for each line from file, each element is one line
 int* get_pos(string file_array_string){
     // 3 is the number of line in file
     string line;
@@ -22,6 +22,7 @@ int* get_pos(string file_array_string){
         cout << "Unable to open file";
     return pos_line;
 }
+// Import load file and read data from each line as string type
 void import(string file_array_string, int *knight_address[], int *event[])
 {
     string line;
@@ -48,6 +49,7 @@ void import(string file_array_string, int *knight_address[], int *event[])
     else
         cout << "Unable to open file";
 }
+// From each line convert to int and save into the address of variable
 void extract_line(string line, int *array_address[],int array_length)
 {
     int length = line.length();
@@ -68,6 +70,7 @@ void extract_line(string line, int *array_address[],int array_length)
         }
     
 }
+// Caculate the num of element from file (just in event)
 int countFreq(string array_string, string array_char)
 {
     int length = array_string.length();
@@ -85,7 +88,7 @@ int countFreq(string array_string, string array_char)
     }
     return res;
 }
-
+// Resize the array length (but not work)
 void relocate(int* arr[],int arr_keep){
    //Delete last specific number of array
     int* newArr=new int(arr_keep);  
