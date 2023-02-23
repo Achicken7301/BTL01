@@ -1,1 +1,2 @@
-g++ -g -o main main.cpp knight.cpp -I . -std=c++11
+g++ -g -o main main.cpp knight.cpp import.cpp -I . -std=c
+++11
