@@ -3,7 +3,8 @@
 
 #include "main.h"
 #include "import.h"
-
+// SIZE ARRAY
+#define MAX 10
 // EVENTS
 #define BOWSER_SURRENDER 0
 #define MADBEAR 1
