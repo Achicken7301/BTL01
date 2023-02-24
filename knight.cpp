@@ -1,5 +1,5 @@
 #include "knight.h"
-#include "import.h"
+
 const int MAX=10;
 
 void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue)
