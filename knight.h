@@ -2,6 +2,7 @@
 #define __KNIGHT_H__
 
 #include "main.h"
+#include "import.h"
 
 // EVENTS
 #define BOWSER_SURRENDER 0
