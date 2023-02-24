@@ -36,17 +36,17 @@ void import(string file_array_string, int *knight_address[], int *event[], strin
         {
             if (pos == pos_line[0])
             {
-                extract_line(line, knight_address, 5, " ");
+                extract_line_num(line, knight_address, 5, " ");
             }
             if (pos == pos_line[1])
             {
                 int num_of_event = countFreq(line, " ") + 1;
-                extract_line(line, event, num_of_event, " ");
+                extract_line_num(line, event, num_of_event, " ");
                 // relocate(event,num_of_event);
             }
             if (pos == pos_line[2])
             {
-                get_packet(line, packet_address, 3, ",");
+                extract_line_string(line, packet_address, 3, ",");
             }
             pos = myfile.tellg(); // end pos in a line
         }
@@ -123,6 +123,7 @@ void get_item(string file_packet, int event)
     string line;
     ifstream myfile(file_packet);
     int row_item;
+    int num_merlin;
     if (myfile.is_open())
     {
         int pos = myfile.tellg();
@@ -135,12 +136,12 @@ void get_item(string file_packet, int event)
             switch (event)
             {
             case MUSH_GHOST:
-                /* code */
+
                 break;
             case ASCLEPIUS:
                 break;
             case MERLIN:
-
+                num_merlin=countFreq(line,"merlin");
                 break;
             default:
                 break;
