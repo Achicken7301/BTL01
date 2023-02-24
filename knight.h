@@ -90,9 +90,9 @@ int nearest_fibonacci(int num);
 
 void increaseHP(knight *knight, int HP_increase);
 
-void increaseRemedy(knight *knight);
-void increaseMaidenKiss(knight *knight);
-void increasePhoenixDown(knight *knight);
+void increaseRemedy(knight *knight,int num_increase);
+void increaseMaidenKiss(knight *knight,int num_increase);
+void increasePhoenixDown(knight *knight,int num_increase);
 
 int is_prime(int n);
 #endif // __KNIGHT_H__
