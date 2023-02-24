@@ -141,6 +141,21 @@ int *get_item(string file_packet, int event)
 
                 break;
             case ASCLEPIUS:
+            if (pos>pos_line[1])
+            {
+                if (countFreq(line, "16")>=1)
+                {
+                    *(item + 1) += countFreq(line, "16");
+                }
+                if (countFreq(line, "17")>=1)
+                {
+                    *(item + 2) += countFreq(line, "17");
+                }
+                if (countFreq(line, "18")>=1)
+                {
+                    *(item + 3) += countFreq(line, "18");
+                }
+            }
                 break;
             case MERLIN:
                 for (int i = 0; i < line.length(); i++)
@@ -152,9 +167,9 @@ int *get_item(string file_packet, int event)
                 if (num_merlin >= 6)
                 {
                     *item += 2;
-                    if (countFreq(line, "merlin") == 1 || countFreq(line, "Merlin")==1)
+                    if (countFreq(line, "merlin") == 1 || countFreq(line, "Merlin") == 1)
                     {
-                        *item+=1;
+                        *item += 1;
                     }
                 }
                 break;
