@@ -1,5 +1,8 @@
 #include "knight.h"
 
+string file_mush_ghost;
+string  file_asclepius_pack;
+string file_merlin_pack;
 void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue)
 {
     cout << "HP=" << HP
@@ -24,9 +27,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
 {
     int *kngiht_address[6] = {&HP, &level, &remedy, &maidenkiss, &phoenixdown, &rescue};
     int* event_tmp[MAX];  
-    string file_mush_ghost;
-    string  file_asclepius_pack;
-    string file_merlin_pack;
+
     string* packet_address[3]={&file_mush_ghost,&file_asclepius_pack,&file_merlin_pack};
     // In proccess
     rescue=-1;
@@ -72,7 +73,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     }
 
     // input events
-    int event[] = {1, 1, MUSH_FIB, 99, 1, 1};
+    int event[] = {18,19};
 
     // Loop all events and return rescue value.
     for (int i = 1; i <= sizeof(event) / sizeof(int); i++)
@@ -233,7 +234,7 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
 
     case REMEDY:
         std::cout << "MEET REMEDY\n";
-        increaseRemedy(knight);
+        increaseRemedy(knight,1);
         if (knight->id == TINY)
         {
             useRemedy(knight);
@@ -243,7 +244,7 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
 
     case MAIDEN_KISS:
         std::cout << "MEET MAIDEN_KISS\n";
-        increaseMaidenKiss(knight);
+        increaseMaidenKiss(knight,1);
         if (knight->id == FROG)
             useMaidenKiss(knight);
 
@@ -251,15 +252,22 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
 
     case PHOENIX_DOWN:
         std::cout << "MEET PHOENIX_DOWN\n";
-        increasePhoenixDown(knight);
+        increasePhoenixDown(knight,1);
         break;
 
     case MERLIN:
         std::cout << "MEET MERLIN\n";
+        int *item;
+        item=get_item(file_merlin_pack,event_id);
+        increaseHP(knight,*item);
         break;
 
     case ASCLEPIUS:
         std::cout << "MEET ASCLEPIUS\n";
+        item=get_item(file_asclepius_pack,event_id);
+        increaseRemedy(knight,*(item+1));
+        increaseMaidenKiss(knight,*(item+2));
+        increasePhoenixDown(knight,*(item+3));
         break;
 
     case BOWSER:
@@ -539,26 +547,26 @@ void increaseHP(knight *knight, int HP_increase)
     }
 }
 
-void increaseRemedy(knight *knight)
+void increaseRemedy(knight *knight,int num_increase)
 {
     printf("knight's remedy +1\n");
-    knight->remedy += 1;
+    knight->remedy += num_increase;
     if (knight->remedy > 99)
     {
         knight->remedy = 99;
     }
 }
-void increaseMaidenKiss(knight *knight)
+void increaseMaidenKiss(knight *knight,int num_increase)
 {
-    knight->maidenkiss += 1;
+    knight->maidenkiss += num_increase;
     if (knight->maidenkiss > 99)
     {
         knight->maidenkiss = 99;
     }
 }
-void increasePhoenixDown(knight *knight)
+void increasePhoenixDown(knight *knight,int num_increase)
 {
-    knight->phoenixdown += 1;
+    knight->phoenixdown += num_increase;
     if (knight->phoenixdown > 99)
     {
         knight->phoenixdown = 99;
