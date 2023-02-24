@@ -8,9 +8,9 @@
 //
 int* get_pos(string file_array_string);
 void import(string file_array_string, int *knight_address[], int *event[],string *packet_address[]);
-void extract_line(string line, int *array_address[],int array_length,string delimerter);
+void extract_line_num(string line, int *array_address[],int array_length,string delimerter);
 int countFreq(string array_string, string array_char);
-void get_packet(string line, string *array_address[], int array_length,string delimeter);
+void extract_line_string(string line, string *array_address[], int array_length,string delimeter);
 void get_item(string file_packet,int event);
 
 
