@@ -1,7 +1,7 @@
 {
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
-        "*.tcc": "cpp",
-        "new": "cpp"
+      "*.tcc": "cpp",
+      "new": "cpp"
     }
 }
