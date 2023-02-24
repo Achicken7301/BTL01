@@ -25,15 +25,31 @@ void display(knight *knight)
 void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &maidenkiss, int &phoenixdown, int &rescue)
 {
     int *kngiht_address[6] = {&HP, &level, &remedy, &maidenkiss, &phoenixdown, &rescue};
-    int* event_address[MAX];  
+    int* event_tmp[MAX];  
+    string file_mush_ghost;
+    string  file_asclepius_pack;
+    string file_merlin_pack;
+    string* packet_address[3]={&file_mush_ghost,&file_asclepius_pack,&file_merlin_pack};
     // In proccess
     rescue=-1;
-  for (int i = 0; i < MAX; i++) {
-        event_address[i] = new int(-1);
+    for (int i = 0; i < MAX; i++) {
+            event_tmp[i] = new int(-1);
     } 
     // FIle was import will change value HP,level,remedy,maidenkiss,resuce
-    import(file_input, kngiht_address,event_address);
+    import(file_input, kngiht_address,event_tmp,packet_address);
     display(HP,level,phoenixdown,maidenkiss,phoenixdown,rescue);
+    int i=0;
+    int num_event=0;
+    while (*event_tmp[i]!=-1){
+        num_event++;
+        i++;
+    }
+    int event_from_file[num_event];
+    for (int i = 0; i < num_event; i++) {
+        event_from_file[i] = *event_tmp[i];
+    } 
+    //Count the num of event
+
     // Readfile import Knight's properties, events, bag_items.
     knight knight1;
     // HP,level,remedy,maidenkiss,pheonixdown
