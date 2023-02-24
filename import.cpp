@@ -23,7 +23,7 @@ int *get_pos(string file_array_string)
         cout << "Unable to open file";
     return pos_line;
 }
-// Import load file and read data from each line as string type
+// Import load file and read line from each line as string type
 void import(string file_array_string, int *knight_address[], int *event[], string *packet_address[])
 {
     string line;
@@ -117,9 +117,15 @@ void extract_line_string(string line, string *array_address[], int array_length,
         line = line.substr(line_blank + 1, length - line_blank);
     }
 }
-void get_item(string file_packet, int event)
+int *get_item(string file_packet, int event)
 {
-    int* pos_line = get_pos(file_packet);
+    // HP increase,Remedy,Maidenkiss,Phoenix down
+    int *item = new int[4];
+    *item = 0;
+    *(item + 1) = 0;
+    *(item + 2) = 0;
+    *(item + 3) = 0;
+    int *pos_line = get_pos(file_packet);
     string line;
     ifstream myfile(file_packet);
     int row_item;
@@ -129,10 +135,6 @@ void get_item(string file_packet, int event)
         int pos = myfile.tellg();
         while (getline(myfile, line))
         {
-            if (pos == 0)
-            {
-                row_item = stoi(line);
-            }
             switch (event)
             {
             case MUSH_GHOST:
@@ -141,15 +143,30 @@ void get_item(string file_packet, int event)
             case ASCLEPIUS:
                 break;
             case MERLIN:
-                num_merlin=countFreq(line,"merlin");
+                for (int i = 0; i < line.length(); i++)
+                {
+                    line[i] = tolower(line[i]);
+                }
+                num_merlin = countFreq(line, "m") + countFreq(line, "e") + countFreq(line, "r") + countFreq(line, "l") + countFreq(line, "i") + countFreq(line, "n");
+                // num_merlin=6 that mean in string have full character of merlin
+                if (num_merlin >= 6)
+                {
+                    *item += 2;
+                    if (countFreq(line, "merlin") == 1 || countFreq(line, "Merlin")==1)
+                    {
+                        *item+=1;
+                    }
+                }
                 break;
             default:
                 break;
             }
             pos = myfile.tellg();
         }
+
         myfile.close();
     }
     else
         cout << "Unable to open file";
+    return item;
 }

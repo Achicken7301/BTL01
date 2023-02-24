@@ -11,7 +11,7 @@ void import(string file_array_string, int *knight_address[], int *event[],string
 void extract_line_num(string line, int *array_address[],int array_length,string delimerter);
 int countFreq(string array_string, string array_char);
 void extract_line_string(string line, string *array_address[], int array_length,string delimeter);
-void get_item(string file_packet,int event);
+int* get_item(string file_packet,int event);
 
 
 
