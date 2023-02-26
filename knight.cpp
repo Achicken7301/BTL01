@@ -22,7 +22,7 @@ void display(knight *knight)
 
 void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &maidenkiss, int &phoenixdown, int &rescue)
 {
-    int *kngiht_address[6] = {&HP, &level, &remedy, &maidenkiss, &phoenixdown, &rescue};
+    int *knight_address[6] = {&HP, &level, &remedy, &maidenkiss, &phoenixdown, &rescue};
     int *event_tmp[MAX];
 
     string *packet_address[3] = {&file_mush_ghost, &file_asclepius_pack, &file_merlin_pack};
@@ -46,7 +46,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     }
 
     // Readfile import Knight's properties, events, bag_items.
-    import(file_input, kngiht_address, event_tmp, packet_address);
+    import(file_input, knight_address, event_tmp, packet_address);
 
     knight knight1;
     // HP,level,remedy,maidenkiss,pheonixdown
