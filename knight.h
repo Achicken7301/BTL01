@@ -2,7 +2,7 @@
 #define __KNIGHT_H__
 
 #include "main.h"
-#include "import.h"
+
 // SIZE ARRAY
 #define MAX 10
 // EVENTS
@@ -68,10 +68,6 @@ typedef struct knight
     /// @brief Condition when meet Asclepius
     int is_meet_Asclepius;
 } knight;
-
-string file_mush_ghost;
-string file_asclepius_pack;
-string file_merlin_pack;
 
 void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &maidenkiss, int &phoenixdown, int &rescue);
 void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue);

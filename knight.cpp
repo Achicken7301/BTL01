@@ -20,6 +20,10 @@ void display(knight *knight)
          << ", rescue=" << knight->rescue << endl;
 }
 
+string file_mush_ghost;
+string file_asclepius_pack;
+string file_merlin_pack;
+
 void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &maidenkiss, int &phoenixdown, int &rescue)
 {
     int *knight_address[6] = {&HP, &level, &remedy, &maidenkiss, &phoenixdown, &rescue};
@@ -32,6 +36,9 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
         event_tmp[i] = new int(-1);
     }
 
+    // Readfile import Knight's properties, events, bag_items.
+    import(file_input, knight_address, event_tmp, packet_address);
+
     int i = 0;
     int num_event = 0;
     while (*event_tmp[i] != -1)
@@ -39,22 +46,19 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
         num_event++;
         i++;
     }
-    int event_from_file[num_event];
+    int event[num_event];
     for (int i = 0; i < num_event; i++)
     {
-        event_from_file[i] = *event_tmp[i];
+        event[i] = *event_tmp[i];
     }
-
-    // Readfile import Knight's properties, events, bag_items.
-    import(file_input, knight_address, event_tmp, packet_address);
 
     knight knight1;
     // HP,level,remedy,maidenkiss,pheonixdown
-    knight1.HP = *HP;
-    knight1.level = *level;
-    knight1.remedy = *remedy;
-    knight1.maidenkiss = *maidenkiss;
-    knight1.phoenixdown = *phoenixdown;
+    knight1.HP = HP;
+    knight1.level = level;
+    knight1.remedy = remedy;
+    knight1.maidenkiss = maidenkiss;
+    knight1.phoenixdown = phoenixdown;
 
     knight1.rescue = NOT_OVER;
     knight1.MAX_HP = knight1.HP;
@@ -69,9 +73,6 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     {
         knight1.id = LANCELOT;
     }
-
-    // input events
-    int event[] = event_from_file;
 
     // Loop all events and return rescue value.
     for (int i = 1; i <= sizeof(event) / sizeof(int); i++)
