@@ -1,3 +1,3 @@
 172 2 0 1 1
 1 2 9 18 99
-mush_ghost,merlin_pack
+.\packet\mush_ghost.txt,.\packet\asclepius_pack.txt,.\packet\merlin_pack.txt
