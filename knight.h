@@ -69,6 +69,10 @@ typedef struct knight
     int is_meet_Asclepius;
 } knight;
 
+string file_mush_ghost;
+string file_asclepius_pack;
+string file_merlin_pack;
+
 void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &maidenkiss, int &phoenixdown, int &rescue);
 void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue);
 void display(knight *knight);
@@ -90,9 +94,17 @@ int nearest_fibonacci(int num);
 
 void increaseHP(knight *knight, int HP_increase);
 
-void increaseRemedy(knight *knight,int num_increase);
-void increaseMaidenKiss(knight *knight,int num_increase);
-void increasePhoenixDown(knight *knight,int num_increase);
+void increaseRemedy(knight *knight, int num_increase);
+void increaseMaidenKiss(knight *knight, int num_increase);
+void increasePhoenixDown(knight *knight, int num_increase);
 
 int is_prime(int n);
+
+int *get_pos(string file_array_string);
+void import(string file_array_string, int *knight_address[], int *event[], string *packet_address[]);
+void extract_line_num(string line, int *array_address[], int array_length, string delimerter);
+int countFreq(string array_string, string array_char);
+void extract_line_string(string line, string *array_address[], int array_length, string delimeter);
+int *get_item(string file_packet, int event);
+
 #endif // __KNIGHT_H__
