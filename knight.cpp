@@ -1,5 +1,8 @@
 #include "knight.h"
 
+string file_mush_ghost;
+string file_asclepius_pack;
+string file_merlin_pack;
 void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue)
 {
     cout << "HP=" << HP
@@ -19,11 +22,6 @@ void display(knight *knight)
          << ", phoenixdown=" << knight->phoenixdown
          << ", rescue=" << knight->rescue << endl;
 }
-
-string file_mush_ghost;
-string file_asclepius_pack;
-string file_merlin_pack;
-
 void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &maidenkiss, int &phoenixdown, int &rescue)
 {
     int *knight_address[6] = {&HP, &level, &remedy, &maidenkiss, &phoenixdown, &rescue};
@@ -115,6 +113,8 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
 
     if (knight1.rescue == OVER)
         cout << "Passed all enemies: winner winner chicken dinner!!\n";
+    display(&knight1);
+
 }
 
 /// @brief
@@ -636,7 +636,6 @@ void import(string file_array_string, int *knight_address[], int *event[], strin
             {
                 int num_of_event = countFreq(line, " ") + 1;
                 extract_line_num(line, event, num_of_event, " ");
-                // relocate(event,num_of_event);
             }
             if (pos == pos_line[2])
             {
@@ -692,6 +691,7 @@ int countFreq(string array_string, string array_char)
     }
     return res;
 }
+
 void extract_line_string(string line, string *array_address[], int array_length, string delimeter)
 {
     int length = line.length();
