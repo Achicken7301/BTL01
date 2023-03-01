@@ -42,6 +42,11 @@ typedef struct enemy
 #define ARTHUR 73
 #define LANCELOT 74
 
+#define MUSH_GHOST_1 1
+#define MUSH_GHOST_2 2
+#define MUSH_GHOST_3 3
+#define MUSH_GHOST_4 4
+
 #define NOT_OVER -1
 #define OVER 1
 #define CANT_RESCUED 0
@@ -95,12 +100,19 @@ void increaseMaidenKiss(knight *knight, int num_increase);
 void increasePhoenixDown(knight *knight, int num_increase);
 
 int is_prime(int n);
-
+//Import function
 int *get_pos(string file_array_string);
-void import(string file_array_string, int *knight_address[], int *event[], string *packet_address[]);
-void extract_line_num(string line, int *array_address[], int array_length, string delimerter);
+//Import from file to array
+void import(string file_array_string, int *knight_address, int *event, string *packet_address[]);
+void extract_line_num(string line, int *array_address, int array_length, string delimerter);
 int countFreq(string array_string, string array_char);
 void extract_line_string(string line, string *array_address[], int array_length, string delimeter);
-int *get_item(string file_packet, int event);
+// EVENT interactive with file.
+int *get_item(string file_packet, int event, int mush_ghosh_type);
+// MUSH GHOST EVENT
+int event_mush_ghost(int arr[],int length ,int type);
+void findMaxMin(int arr[],int length,int& maxIndex, int& minIndex);
+int findSecondMax(int arr[], int length);
+int findMountainArray(int arr[], int length);
 
 #endif // __KNIGHT_H__

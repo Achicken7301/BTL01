@@ -1,14 +1,17 @@
 #include "knight.h"
 
-void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue)
-{
-    cout << "HP=" << HP
-         << ", level=" << level
-         << ", remedy=" << remedy
-         << ", maidenkiss=" << maidenkiss
-         << ", phoenixdown=" << phoenixdown
-         << ", rescue=" << rescue << endl;
-}
+string file_mush_ghost;
+string file_asclepius_pack;
+string file_merlin_pack;
+// void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue)
+// {
+//     cout << "HP=" << HP
+//          << ", level=" << level
+//          << ", remedy=" << remedy
+//          << ", maidenkiss=" << maidenkiss
+//          << ", phoenixdown=" << phoenixdown
+//          << ", rescue=" << rescue << endl;
+// }
 
 void display(knight *knight)
 {
@@ -19,29 +22,18 @@ void display(knight *knight)
          << ", phoenixdown=" << knight->phoenixdown
          << ", rescue=" << knight->rescue << endl;
 }
-
-string file_mush_ghost;
-string file_asclepius_pack;
-string file_merlin_pack;
-
 void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &maidenkiss, int &phoenixdown, int &rescue)
 {
-    int *knight_address[6] = {&HP, &level, &remedy, &maidenkiss, &phoenixdown, &rescue};
-    int *event_tmp[MAX];
-
+    int knight_address[6] = {HP, level, remedy, maidenkiss, phoenixdown, rescue};
+    int *event_tmp=new int[MAX];
     string *packet_address[3] = {&file_mush_ghost, &file_asclepius_pack, &file_merlin_pack};
-
-    for (int i = 0; i < MAX; i++)
-    {
-        event_tmp[i] = new int(-1);
-    }
 
     // Readfile import Knight's properties, events, bag_items.
     import(file_input, knight_address, event_tmp, packet_address);
 
     int i = 0;
     int num_event = 0;
-    while (*event_tmp[i] != -1)
+    while (event_tmp[i] >= 0)
     {
         num_event++;
         i++;
@@ -49,16 +41,16 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     int event[num_event];
     for (int i = 0; i < num_event; i++)
     {
-        event[i] = *event_tmp[i];
+        event[i] = event_tmp[i];
     }
 
     knight knight1;
     // HP,level,remedy,maidenkiss,pheonixdown
-    knight1.HP = HP;
-    knight1.level = level;
-    knight1.remedy = remedy;
-    knight1.maidenkiss = maidenkiss;
-    knight1.phoenixdown = phoenixdown;
+    knight1.HP = knight_address[0];
+    knight1.level = knight_address[1];
+    knight1.remedy = knight_address[2];
+    knight1.maidenkiss = knight_address[3];
+    knight1.phoenixdown = knight_address[4];
 
     knight1.rescue = NOT_OVER;
     knight1.MAX_HP = knight1.HP;
@@ -73,48 +65,52 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     {
         knight1.id = LANCELOT;
     }
-
     // Loop all events and return rescue value.
     for (int i = 1; i <= sizeof(event) / sizeof(int); i++)
     {
         knightMeetsEvent(&i, event[i - 1], &knight1);
+
         // rescure CONDITION
         if (knight1.rescue == OVER)
         {
-            cout << "WIN GAME\n";
+            // cout << "WIN GAME\n";
+            display(&knight1);
             break;
         }
-        else if (knight1.rescue == CANT_RESCUED)
+        else if ((knight1.rescue == CANT_RESCUED))
         {
-            cout << "princess cant be rescued\n";
+            // cout << "princess cant be rescued\n";
+            display(&knight1);
             break;
         }
-        else if (knight1.rescue == NOT_OVER)
+        else if ((i<sizeof(event) / sizeof(int))&&(knight1.rescue == NOT_OVER))
         {
-            if (i == sizeof(event) / sizeof(int))
-            {
-                knight1.rescue = OVER;
-            }
+            display(&knight1);
+        }
+        if (i == sizeof(event) / sizeof(int))
+        {
+            knight1.rescue = OVER;
+            display(&knight1);
+            break;
         }
 
         // TINY CONDITION
         if (knight1.tiny_lasted > 0 && (knight1.id == FROG || knight1.id == TINY))
         {
             knight1.tiny_lasted--;
-            printf("knight1.tiny_lasted: %d\n", knight1.tiny_lasted);
+            // printf("knight1.tiny_lasted: %d\n", knight1.tiny_lasted);
             if (knight1.tiny_lasted == 0)
             {
-                printf("Tiny no longer, turn back to normal health x 5\n");
+                // printf("Tiny no longer, turn back to normal health x 5\n");
                 knight1.HP *= 5;
             }
         }
 
-        display(&knight1);
-        std::cout << endl;
+       
+        // std::cout << endl;
     }
-
-    if (knight1.rescue == OVER)
-        cout << "Passed all enemies: winner winner chicken dinner!!\n";
+    // if (knight1.rescue == OVER)
+    //     // cout << "Passed all enemies: winner winner chicken dinner!!\n";
 }
 
 /// @brief
@@ -133,13 +129,13 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
     switch (event_id)
     {
     case BOWSER_SURRENDER:
-        std::cout << "BOWSER_SURRENDER\n";
-        knight->level += 1;
+        // std::cout << "BOWSER_SURRENDER\n";
+        // knight->level += 1;
         knight->rescue = OVER;
         break;
 
     case MADBEAR:
-        std::cout << "MEET MADBEAR\n";
+        // std::cout << "MEET MADBEAR\n";
         enemy madbear;
         madbear.baseDamge = 1;
         madbear.id = MONSTER;
@@ -147,7 +143,7 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
         break;
 
     case BANDIT:
-        std::cout << "MEET BANDIT\n";
+        // std::cout << "MEET BANDIT\n";
 
         enemy bandit;
         bandit.baseDamge = 1.5;
@@ -156,7 +152,7 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
         break;
 
     case LORDLUPIN:
-        std::cout << "MEET LORDLUPIN\n";
+        // std::cout << "MEET LORDLUPIN\n";
         enemy LordLupin;
         LordLupin.baseDamge = 4.5;
         LordLupin.id = MONSTER;
@@ -164,7 +160,7 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
         break;
 
     case ELF:
-        std::cout << "MEET ELF\n";
+        // std::cout << "MEET ELF\n";
         enemy elf;
         elf.baseDamge = 7.5;
         elf.id = MONSTER;
@@ -172,7 +168,7 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
         break;
 
     case TROLL:
-        std::cout << "MEET TROLL\n";
+        // std::cout << "MEET TROLL\n";
         enemy troll;
         troll.baseDamge = 9.5;
         troll.id = MONSTER;
@@ -180,7 +176,7 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
         break;
 
     case SHAMAN:
-        std::cout << "MEET SHAMAN\n";
+        // std::cout << "MEET SHAMAN\n";
         enemy shaman;
         shaman.id = WITCH;
         shaman.name = SHAMAN;
@@ -188,7 +184,7 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
         break;
 
     case VAJISH:
-        std::cout << "MEET VAJISH\n";
+        // std::cout << "MEET VAJISH\n";
         enemy vajish;
         vajish.id = WITCH;
         vajish.name = VAJISH;
@@ -196,7 +192,7 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
         break;
 
     case MUSH_MARIO:
-        std::cout << "MEET MUSH_MARIO\n";
+        // std::cout << "MEET MUSH_MARIO\n";
         int n1, s1;
         n1 = ((knight->level + knight->phoenixdown) % 5 + 1) * 3;
         s1 = sum_largest_odds(n1);
@@ -209,10 +205,10 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
         break;
 
     case MUSH_FIB:
-        std::cout << "MEET MUSH_FIB\n";
+        // std::cout << "MEET MUSH_FIB\n";
         if (knight->HP > 1)
         {
-            printf("nearest_fibonacci(%d): %d\n", knight->HP, nearest_fibonacci(knight->HP));
+            // printf("nearest_fibonacci(%d): %d\n", knight->HP, nearest_fibonacci(knight->HP));
             knight->HP = nearest_fibonacci(knight->HP);
         }
         else if (knight->HP == 1)
@@ -223,17 +219,21 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
         break;
 
     case MUSH_GHOST:
-        std::cout << "MEET MUSH_GHOST\n";
+        // std::cout << "MEET MUSH_GHOST\n";
         // Not done implement
         for (size_t i = 0; i < mush_ghost_arr_id.length(); i++)
         {
-            cout << mush_ghost_arr_id[i] << endl;
+            int *item;
+            int mush_type=mush_ghost_arr_id[i]-'0';
+            // cout<<mush_type;
+            item = get_item(file_mush_ghost, event_id,mush_type);
+            increaseHP(knight, *item);
         }
 
         break;
 
     case REMEDY:
-        std::cout << "MEET REMEDY\n";
+        // std::cout << "MEET REMEDY\n";
         increaseRemedy(knight, 1);
         if (knight->id == TINY)
         {
@@ -243,7 +243,7 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
         break;
 
     case MAIDEN_KISS:
-        std::cout << "MEET MAIDEN_KISS\n";
+        // std::cout << "MEET MAIDEN_KISS\n";
         increaseMaidenKiss(knight, 1);
         if (knight->id == FROG)
             useMaidenKiss(knight);
@@ -251,27 +251,29 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
         break;
 
     case PHOENIX_DOWN:
-        std::cout << "MEET PHOENIX_DOWN\n";
+        // std::cout << "MEET PHOENIX_DOWN\n";
         increasePhoenixDown(knight, 1);
         break;
 
     case MERLIN:
-        std::cout << "MEET MERLIN\n";
+        // std::cout << "MEET MERLIN\n";
         int *item;
-        item = get_item(file_merlin_pack, event_id);
+        //0 beacause do not meet MUSH GHOST
+        item = get_item(file_merlin_pack, event_id,0);
         increaseHP(knight, *item);
         break;
 
     case ASCLEPIUS:
-        std::cout << "MEET ASCLEPIUS\n";
-        item = get_item(file_asclepius_pack, event_id);
+        // std::cout << "MEET ASCLEPIUS\n";
+        // 0 beacause do not meet MUSH GHOST
+        item = get_item(file_asclepius_pack, event_id,0);
         increaseRemedy(knight, *(item + 1));
         increaseMaidenKiss(knight, *(item + 2));
         increasePhoenixDown(knight, *(item + 3));
         break;
 
     case BOWSER:
-        std::cout << "MEET BOWSER\n";
+        // std::cout << "MEET BOWSER\n";
         enemy bowser;
         bowser.name = BOWSER;
         battle(event_index, knight, &bowser);
@@ -286,7 +288,7 @@ void battle(int *event_index, knight *knight, enemy *enemy)
 {
     int b = *event_index % 10;
     enemy->level = *event_index > 6 ? (b > 5 ? b : 5) : b;
-    printf("Enemy LevelO: %d\n", enemy->level);
+    // printf("Enemy LevelO: %d\n", enemy->level);
 
     switch (compareLevel(knight, enemy))
     {
@@ -315,12 +317,12 @@ void battle(int *event_index, knight *knight, enemy *enemy)
         if (enemy->id == MONSTER)
         {
             enemy->realDamge = enemy->baseDamge * enemy->level * 10;
-            std::cout << "knight's health lost: " << enemy->realDamge << endl;
+            // std::cout << "knight's health lost: " << enemy->realDamge << endl;
             knight->HP = knight->HP - enemy->realDamge;
             // CAL KNIGHT HP
             if (knight->HP <= 0)
             {
-                printf("knight's HP < 0\n");
+                // printf("knight's HP < 0\n");
                 if (knight->phoenixdown > 0)
                 {
                     usePhoenixDown(knight);
@@ -340,13 +342,13 @@ void battle(int *event_index, knight *knight, enemy *enemy)
         {
             if (knight->id == TINY || knight->id == FROG)
             {
-                printf("knight already a frog or being tiny\n");
+                // printf("knight already a frog or being tiny\n");
                 break;
             }
 
             if (enemy->name == SHAMAN)
             {
-                printf("Turn knight to tiny\n");
+                // printf("Turn knight to tiny\n");
                 knight->id = TINY;
                 // 4 = current event + next 3 events
                 knight->tiny_lasted = 4;
@@ -383,7 +385,7 @@ void battle(int *event_index, knight *knight, enemy *enemy)
 
             if (enemy->name == VAJISH)
             {
-                printf("Turn knight to frog with level 1\n");
+                // printf("Turn knight to frog with level 1\n");
                 knight->id = FROG;
                 knight->before_turn_frog_level = knight->level;
                 knight->level = 1;
@@ -400,7 +402,7 @@ void battle(int *event_index, knight *knight, enemy *enemy)
         break;
 
     case EQUAL:
-        printf("FIGHT EVEN\n");
+        // printf("FIGHT EVEN\n");
         break;
 
     default:
@@ -410,7 +412,7 @@ void battle(int *event_index, knight *knight, enemy *enemy)
 
 void useMaidenKiss(knight *knight)
 {
-    printf("knight uses maiden kiss\n");
+    // printf("knight uses maiden kiss\n");
     knight->maidenkiss--;
     knight->id = NORMAL; // normal
     knight->level = knight->before_turn_frog_level;
@@ -419,7 +421,7 @@ void useMaidenKiss(knight *knight)
 
 void usePhoenixDown(knight *knight)
 {
-    printf("knight has Phoenix Down\n");
+    // printf("knight has Phoenix Down\n");
     knight->phoenixdown--;
     knight->HP = knight->MAX_HP;
     knight->tiny_lasted = 0;
@@ -427,7 +429,7 @@ void usePhoenixDown(knight *knight)
 
 void useRemedy(knight *knight)
 {
-    printf("knight uses remedy\n");
+    // printf("knight uses remedy\n");
     knight->remedy--;
     knight->id = NORMAL; // normal condition
     knight->HP *= 5;
@@ -443,7 +445,7 @@ int compareLevel(knight *knight, enemy *enemy)
     */
     if (((knight->id == NORMAL && knight->level < 10) or (knight->level < 8 && (knight->id == ARTHUR || knight->id == LANCELOT))) && enemy->name == BOWSER)
     {
-        printf("Meets bowser and lost\n");
+        // printf("Meets bowser and lost\n");
         knight->rescue = CANT_RESCUED;
         return 123;
     }
@@ -451,14 +453,14 @@ int compareLevel(knight *knight, enemy *enemy)
     // Arthur
     if (knight->id == ARTHUR)
     {
-        printf("Arthur WIN\n");
+        // printf("Arthur WIN\n");
         return GREATER;
     }
 
     // Lancelot
     if (knight->id == LANCELOT && (enemy->id == MONSTER or enemy->id == WITCH))
     {
-        printf("Lancelot wins Monster and Witch\n");
+        // printf("Lancelot wins Monster and Witch\n");
         return GREATER;
     }
 
@@ -468,27 +470,27 @@ int compareLevel(knight *knight, enemy *enemy)
         if (enemy->name == BOWSER)
         {
             knight->level = 10;
-            printf("Arthur or lancelot or knight's level 10 wins bowser\n");
+            // printf("Arthur or lancelot or knight's level 10 wins bowser\n");
             return GREATER;
         }
 
-        printf("knight level > enemy level\n");
+        // printf("knight level > enemy level\n");
         return GREATER;
     }
     else if (knight->level < enemy->level)
     {
-        printf("knight level < enemy level\n");
+        // printf("knight level < enemy level\n");
         return LESS;
     }
 
     else if (knight->level == enemy->level)
     {
-        printf("knight level = enemy level\n");
+        // printf("knight level = enemy level\n");
         return EQUAL;
     }
     else
     {
-        printf("WTF IS THIS???\n");
+        // printf("WTF IS THIS???\n");
         return -99;
     }
 }
@@ -549,7 +551,7 @@ void increaseHP(knight *knight, int HP_increase)
 
 void increaseRemedy(knight *knight, int num_increase)
 {
-    printf("knight's remedy %d\n", num_increase);
+    // printf("knight's remedy %d\n", num_increase);
     knight->remedy += num_increase;
     if (knight->remedy > 99)
     {
@@ -558,7 +560,7 @@ void increaseRemedy(knight *knight, int num_increase)
 }
 void increaseMaidenKiss(knight *knight, int num_increase)
 {
-    printf("knight's maidenkiss %d\n", num_increase);
+    // printf("knight's maidenkiss %d\n", num_increase);
 
     knight->maidenkiss += num_increase;
     if (knight->maidenkiss > 99)
@@ -568,7 +570,7 @@ void increaseMaidenKiss(knight *knight, int num_increase)
 }
 void increasePhoenixDown(knight *knight, int num_increase)
 {
-    printf("knight's phoenixdown %d\n", num_increase);
+    // printf("knight's phoenixdown %d\n", num_increase);
 
     knight->phoenixdown += num_increase;
     if (knight->phoenixdown > 99)
@@ -618,7 +620,7 @@ int *get_pos(string file_array_string)
     return pos_line;
 }
 // Import load file and read line from each line as string type
-void import(string file_array_string, int *knight_address[], int *event[], string *packet_address[])
+void import(string file_array_string, int *knight_address, int *event, string *packet_address[])
 {
     string line;
     ifstream myfile(file_array_string);
@@ -636,7 +638,6 @@ void import(string file_array_string, int *knight_address[], int *event[], strin
             {
                 int num_of_event = countFreq(line, " ") + 1;
                 extract_line_num(line, event, num_of_event, " ");
-                // relocate(event,num_of_event);
             }
             if (pos == pos_line[2])
             {
@@ -650,7 +651,7 @@ void import(string file_array_string, int *knight_address[], int *event[], strin
         cout << "Unable to open file";
 }
 // From each line convert to int and save into the address of variable
-void extract_line_num(string line, int *array_address[], int array_length, string delimeter)
+void extract_line_num(string line, int *array_address, int array_length, string delimeter)
 {
     int length = line.length();
     int i = 0;
@@ -664,7 +665,7 @@ void extract_line_num(string line, int *array_address[], int array_length, strin
         int line_blank = line.find(delimeter);
         string line_num;
         line_num = line.substr(0, line_blank);
-        *array_address[i] = stoi(line_num);
+        array_address[i] = std::stoi(line_num);
         i++;
         line = line.substr(line_blank + 1, length - line_blank);
     }
@@ -692,6 +693,7 @@ int countFreq(string array_string, string array_char)
     }
     return res;
 }
+
 void extract_line_string(string line, string *array_address[], int array_length, string delimeter)
 {
     int length = line.length();
@@ -711,7 +713,7 @@ void extract_line_string(string line, string *array_address[], int array_length,
         line = line.substr(line_blank + 1, length - line_blank);
     }
 }
-int *get_item(string file_packet, int event)
+int *get_item(string file_packet, int event, int mush_ghosh_type)
 {
     // HP increase,Remedy,Maidenkiss,Phoenix down
     int *item = new int[4];
@@ -732,6 +734,14 @@ int *get_item(string file_packet, int event)
             switch (event)
             {
             case MUSH_GHOST:
+                if (pos == pos_line[1])
+                {
+                    int length = countFreq(line, ",") + 1;
+                    int mush_ghost[length];
+                    extract_line_num(line, mush_ghost, length, ",");
+                    row_item=countFreq(line,",")+1;
+                    *item = event_mush_ghost(mush_ghost, row_item,mush_ghosh_type);
+                }
 
                 break;
             case ASCLEPIUS:
@@ -778,4 +788,110 @@ int *get_item(string file_packet, int event)
     else
         cout << "Unable to open file";
     return item;
+}
+// Subfunction for MUSH GHOST EVENT
+
+// Function to find the index of
+// the peak element in the array
+int findMountainArray(int arr[], int length)
+{
+    int peak;
+    if (length < 3)
+        peak = -3;
+    int i = 0;
+    for (i = 1; i < length; i++)
+        if (arr[i] <= arr[i - 1])
+            break;
+    peak = i - 1;
+    for (; i < length; i++)
+        if (arr[i] >= arr[i - 1])
+        {
+            peak = -3;
+            break;
+        }
+    return peak;
+}
+void findMaxMin(int arr[],int length,int& maxIndex, int& minIndex)
+{
+    int max_min[2];
+    int i_max = 0;
+    int i_min = 0;
+    for (int i = 0; i < length; i++)
+    {
+        if (arr[i] > arr[i_max])
+            i_max = i;
+        if (arr[i] < arr[i_min])
+            i_min = i;
+    }
+    maxIndex = i_max;
+    minIndex = i_min;
+}
+// Function to find the second maximum value in an array
+int findSecondMax(int arr[], int n)
+{
+    int i_max, i_secondmax;
+    findMaxMin(arr, n,i_max, i_secondmax);
+    for (int i = 0; i < n; i++) {
+        if (arr[i] != arr[i_max] && arr[i] > arr[i_secondmax]) {
+            i_secondmax = i;
+        }
+    }
+    // If there is no second maximum value, set i_secondmax to -1
+    if (i_secondmax == i_max) {
+        i_secondmax = -7;
+    }
+    return i_secondmax;
+}
+// MUSH GHOST EVENT
+int event_mush_ghost(int arr[],int length ,int type)
+{
+    int HP_change;
+    int max, min;
+    int i_second_max=-7;
+    int second_max=-5;
+
+    int *tmp;
+    switch (type)
+    {
+    case MUSH_GHOST_1:
+        findMaxMin(arr, length,min, max);
+        HP_change = -(max + min);
+        break;
+    case MUSH_GHOST_2:
+        int mtx, mti;
+        mti = findMountainArray(arr, length);
+        if (mti < 0)
+            mtx = -2;
+        mtx = arr[mti];
+        HP_change = -(mtx + mti);
+        break;
+    case MUSH_GHOST_3:
+        for (int i = 0; i < length; i++)
+        {
+            arr[i] = abs(arr[i]);
+            arr[i] = (17 * arr[i] + 9) % 257;
+        }
+        findMaxMin(arr, length,max,min);
+        HP_change = -(max + min);
+        break;
+    case MUSH_GHOST_4:
+        for (int i = 0; i < length; i++)
+        {
+            arr[i] = abs(arr[i]);
+            arr[i] = (17 * arr[i] + 9) % 257;
+        }
+        int sub_arr[3];
+        for (int i=0;i<3;i++)
+        {
+            sub_arr[i]=arr[i];
+        }
+        
+        i_second_max=findSecondMax(sub_arr,3);
+        if (i_second_max!=-7)
+            second_max=arr[i_second_max];
+        HP_change=-(second_max+i_second_max);
+    default:
+        break;
+    }
+    return HP_change;
 }
