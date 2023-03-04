@@ -56,6 +56,18 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     for (int i = 1; i <= num_event; i++)
     {
         knightMeetsEvent(&i, event[i - 1], &knight1);
+        
+        // TINY CONDITION
+        if (knight1.tiny_lasted > 0 && (knight1.id == FROG || knight1.id == TINY))
+        {
+            knight1.tiny_lasted--;
+            // printf("knight1.tiny_lasted: %d\n", knight1.tiny_lasted);
+            if (knight1.tiny_lasted == 0)
+            {
+                // printf("Tiny no longer, turn back to normal health x 5\n");
+                knight1.HP *= 5;
+            }
+        }
 
         // rescure CONDITION
         if (knight1.rescue == OVER)
@@ -79,18 +91,6 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
             knight1.rescue = OVER;
             display(&knight1);
             break;
-        }
-
-        // TINY CONDITION
-        if (knight1.tiny_lasted > 0 && (knight1.id == FROG || knight1.id == TINY))
-        {
-            knight1.tiny_lasted--;
-            // printf("knight1.tiny_lasted: %d\n", knight1.tiny_lasted);
-            if (knight1.tiny_lasted == 0)
-            {
-                // printf("Tiny no longer, turn back to normal health x 5\n");
-                knight1.HP *= 5;
-            }
         }
 
         // std::cout << endl;
