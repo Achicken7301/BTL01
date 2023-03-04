@@ -25,25 +25,12 @@ void display(knight *knight)
 void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &maidenkiss, int &phoenixdown, int &rescue)
 {
     int knight_address[6] = {HP, level, remedy, maidenkiss, phoenixdown, rescue};
-    int *event_tmp=new int[MAX];
+    int num_event = MAX;
+    int *event = new int[num_event];
     string *packet_address[3] = {&file_mush_ghost, &file_asclepius_pack, &file_merlin_pack};
 
     // Readfile import Knight's properties, events, bag_items.
-    import(file_input, knight_address, event_tmp, packet_address);
-
-    int i = 0;
-    int num_event = 0;
-    while (event_tmp[i] >= 0)
-    {
-        num_event++;
-        i++;
-    }
-    int event[num_event];
-    for (int i = 0; i < num_event; i++)
-    {
-        event[i] = event_tmp[i];
-    }
-
+    import(file_input, knight_address, event, num_event, packet_address);
     knight knight1;
     // HP,level,remedy,maidenkiss,pheonixdown
     knight1.HP = knight_address[0];
@@ -66,7 +53,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
         knight1.id = LANCELOT;
     }
     // Loop all events and return rescue value.
-    for (int i = 1; i <= sizeof(event) / sizeof(int); i++)
+    for (int i = 1; i <= num_event; i++)
     {
         knightMeetsEvent(&i, event[i - 1], &knight1);
 
@@ -83,11 +70,11 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
             display(&knight1);
             break;
         }
-        else if ((i<sizeof(event) / sizeof(int))&&(knight1.rescue == NOT_OVER))
+        else if ((i < num_event) && (knight1.rescue == NOT_OVER))
         {
             display(&knight1);
         }
-        if (i == sizeof(event) / sizeof(int))
+        if (i == num_event)
         {
             knight1.rescue = OVER;
             display(&knight1);
@@ -106,7 +93,6 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
             }
         }
 
-       
         // std::cout << endl;
     }
     // if (knight1.rescue == OVER)
@@ -223,11 +209,11 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
         // Not done implement
         for (size_t i = 0; i < mush_ghost_arr_id.length(); i++)
         {
-            int *item;
-            int mush_type=mush_ghost_arr_id[i]-'0';
+            int *item_13;
+            int mush_type = mush_ghost_arr_id[i] - '0';
             // cout<<mush_type;
-            item = get_item(file_mush_ghost, event_id,mush_type);
-            increaseHP(knight, *item);
+            item_13 = get_item(file_mush_ghost, event_id, mush_type);
+            increaseHP(knight, *item_13);
         }
 
         break;
@@ -257,19 +243,24 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
 
     case MERLIN:
         // std::cout << "MEET MERLIN\n";
-        int *item;
-        //0 beacause do not meet MUSH GHOST
-        item = get_item(file_merlin_pack, event_id,0);
-        increaseHP(knight, *item);
+        int *item_18;
+        // 0 beacause do not meet MUSH GHOST
+        item_18 = get_item(file_merlin_pack, event_id, 0);
+        increaseHP(knight, *item_18);
         break;
 
     case ASCLEPIUS:
         // std::cout << "MEET ASCLEPIUS\n";
         // 0 beacause do not meet MUSH GHOST
-        item = get_item(file_asclepius_pack, event_id,0);
-        increaseRemedy(knight, *(item + 1));
-        increaseMaidenKiss(knight, *(item + 2));
-        increasePhoenixDown(knight, *(item + 3));
+        int *item_19;
+        item_19 = get_item(file_asclepius_pack, event_id, 0);
+        // cout<<"Remedy:"<<*(item_19+1)<<endl;
+        // cout<<"MaidenKiss:"<<*(item_19+2)<<endl;
+        // cout<<"PhoenixDown:"<<*(item_19+3)<<endl;
+
+        increaseRemedy(knight, *(item_19 + 1));
+        increaseMaidenKiss(knight, *(item_19 + 2));
+        increasePhoenixDown(knight, *(item_19 + 3));
         break;
 
     case BOWSER:
@@ -620,7 +611,7 @@ int *get_pos(string file_array_string)
     return pos_line;
 }
 // Import load file and read line from each line as string type
-void import(string file_array_string, int *knight_address, int *event, string *packet_address[])
+void import(string file_array_string, int *knight_address, int *&event, int &num_event, string *packet_address[])
 {
     string line;
     ifstream myfile(file_array_string);
@@ -636,8 +627,9 @@ void import(string file_array_string, int *knight_address, int *event, string *p
             }
             if (pos == pos_line[1])
             {
-                int num_of_event = countFreq(line, " ") + 1;
-                extract_line_num(line, event, num_of_event, " ");
+                num_event = countFreq(line, " ") + 1;
+                extract_line_num(line, event, num_event, " ");
+                relocate(event, num_event);
             }
             if (pos == pos_line[2])
             {
@@ -739,8 +731,8 @@ int *get_item(string file_packet, int event, int mush_ghosh_type)
                     int length = countFreq(line, ",") + 1;
                     int mush_ghost[length];
                     extract_line_num(line, mush_ghost, length, ",");
-                    row_item=countFreq(line,",")+1;
-                    *item = event_mush_ghost(mush_ghost, row_item,mush_ghosh_type);
+                    row_item = countFreq(line, ",") + 1;
+                    *item = event_mush_ghost(mush_ghost, row_item, mush_ghosh_type);
                 }
 
                 break;
@@ -749,15 +741,34 @@ int *get_item(string file_packet, int event, int mush_ghosh_type)
                 {
                     if (countFreq(line, "16") >= 1)
                     {
-                        *(item + 1) += countFreq(line, "16");
+                        if (countFreq(line, "16") - countFreq(line, "-16") <= 3)
+                        {
+                            *(item + 1) += countFreq(line, "16");
+                            *(item + 1) -= countFreq(line, "-16");
+                        }
+                        else
+                            *(item + 1) += 3;
                     }
                     if (countFreq(line, "17") >= 1)
                     {
-                        *(item + 2) += countFreq(line, "17");
+
+                        if (countFreq(line, "17") - countFreq(line, "-17") <= 3)
+                        {
+                            *(item + 2) += countFreq(line, "17");
+                            *(item + 2) -= countFreq(line, "-17");
+                        }
+                        else
+                            *(item + 2) += 3;
                     }
                     if (countFreq(line, "18") >= 1)
                     {
-                        *(item + 3) += countFreq(line, "18");
+                        if (countFreq(line, "18") - countFreq(line, "-18") <= 3)
+                        {
+                            *(item + 3) += countFreq(line, "18");
+                            *(item + 3) -= countFreq(line, "-18");
+                        }
+                        else
+                            *(item + 3) += 3;
                     }
                 }
                 break;
@@ -811,7 +822,7 @@ int findMountainArray(int arr[], int length)
         }
     return peak;
 }
-void findMaxMin(int arr[],int length,int& maxIndex, int& minIndex)
+void findMaxMin(int arr[], int length, int &maxIndex, int &minIndex)
 {
     int max_min[2];
     int i_max = 0;
@@ -830,31 +841,34 @@ void findMaxMin(int arr[],int length,int& maxIndex, int& minIndex)
 int findSecondMax(int arr[], int n)
 {
     int i_max, i_secondmax;
-    findMaxMin(arr, n,i_max, i_secondmax);
-    for (int i = 0; i < n; i++) {
-        if (arr[i] != arr[i_max] && arr[i] > arr[i_secondmax]) {
+    findMaxMin(arr, n, i_max, i_secondmax);
+    for (int i = 0; i < n; i++)
+    {
+        if (arr[i] != arr[i_max] && arr[i] > arr[i_secondmax])
+        {
             i_secondmax = i;
         }
     }
     // If there is no second maximum value, set i_secondmax to -1
-    if (i_secondmax == i_max) {
+    if (i_secondmax == i_max)
+    {
         i_secondmax = -7;
     }
     return i_secondmax;
 }
 // MUSH GHOST EVENT
-int event_mush_ghost(int arr[],int length ,int type)
+int event_mush_ghost(int arr[], int length, int type)
 {
     int HP_change;
     int max, min;
-    int i_second_max=-7;
-    int second_max=-5;
+    int i_second_max = -7;
+    int second_max = -5;
 
     int *tmp;
     switch (type)
     {
     case MUSH_GHOST_1:
-        findMaxMin(arr, length,min, max);
+        findMaxMin(arr, length, min, max);
         HP_change = -(max + min);
         break;
     case MUSH_GHOST_2:
@@ -871,7 +885,7 @@ int event_mush_ghost(int arr[],int length ,int type)
             arr[i] = abs(arr[i]);
             arr[i] = (17 * arr[i] + 9) % 257;
         }
-        findMaxMin(arr, length,max,min);
+        findMaxMin(arr, length, max, min);
         HP_change = -(max + min);
         break;
     case MUSH_GHOST_4:
@@ -881,17 +895,27 @@ int event_mush_ghost(int arr[],int length ,int type)
             arr[i] = (17 * arr[i] + 9) % 257;
         }
         int sub_arr[3];
-        for (int i=0;i<3;i++)
+        for (int i = 0; i < 3; i++)
         {
-            sub_arr[i]=arr[i];
+            sub_arr[i] = arr[i];
         }
-        
-        i_second_max=findSecondMax(sub_arr,3);
-        if (i_second_max!=-7)
-            second_max=arr[i_second_max];
-        HP_change=-(second_max+i_second_max);
+
+        i_second_max = findSecondMax(sub_arr, 3);
+        if (i_second_max != -7)
+            second_max = arr[i_second_max];
+        HP_change = -(second_max + i_second_max);
     default:
         break;
     }
     return HP_change;
+}
+void relocate(int *&arr, int count)
+{
+    int *new_arr = new int[count];
+    for (int i = 0; i < count; i++)
+    {
+        new_arr[i] = arr[i];
+    }
+    delete[] arr;
+    arr = new_arr;
 }
