@@ -533,6 +533,14 @@ void increaseHP(knight *knight, int HP_increase)
     {
         knight->HP = knight->MAX_HP;
     }
+    if (knight->HP <= 0)
+    {
+        if (knight->phoenixdown > 0)
+        {
+            usePhoenixDown(knight);
+            knight->rescue = NOT_OVER;
+        }
+    }
 }
 
 void increaseRemedy(knight *knight, int num_increase)
@@ -825,9 +833,9 @@ void findMaxMin(int arr[], int length, int &maxIndex, int &minIndex)
     int i_min = 0;
     for (int i = 0; i < length; i++)
     {
-        if (arr[i] > arr[i_max])
+        if (arr[i] >= arr[i_max])
             i_max = i;
-        if (arr[i] < arr[i_min])
+        if (arr[i] <= arr[i_min])
             i_min = i;
     }
     maxIndex = i_max;
