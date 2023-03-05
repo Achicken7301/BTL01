@@ -56,7 +56,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
     for (int i = 1; i <= num_event; i++)
     {
         knightMeetsEvent(&i, event[i - 1], &knight1);
-        
+
         // TINY CONDITION
         if (knight1.tiny_lasted > 0 && (knight1.id == FROG || knight1.id == TINY))
         {
@@ -105,6 +105,7 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
 /// @return knight->rescue
 void knightMeetsEvent(int *event_index, int event_id, knight *knight)
 {
+    int *item = new int[4];
     string mush_ghost_arr_id;
     if (std::to_string(event_id).substr(0, 2) == std::to_string(13))
     {
@@ -206,14 +207,12 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
 
     case MUSH_GHOST:
         // std::cout << "MEET MUSH_GHOST\n";
-        // Not done implement
         for (size_t i = 0; i < mush_ghost_arr_id.length(); i++)
         {
-            int *item_13;
             int mush_type = mush_ghost_arr_id[i] - '0';
             // cout<<mush_type;
-            item_13 = get_item(file_mush_ghost, event_id, mush_type);
-            increaseHP(knight, *item_13);
+            get_item(item, 4, file_mush_ghost, event_id, mush_type);
+            increaseHP(knight, item[0]);
         }
 
         break;
@@ -243,24 +242,20 @@ void knightMeetsEvent(int *event_index, int event_id, knight *knight)
 
     case MERLIN:
         // std::cout << "MEET MERLIN\n";
-        int *item_18;
-        // 0 beacause do not meet MUSH GHOST
-        item_18 = get_item(file_merlin_pack, event_id, 0);
-        increaseHP(knight, *item_18);
+        get_item(item, 4, file_merlin_pack, event_id, 0);
+        increaseHP(knight, item[0]);
         break;
 
     case ASCLEPIUS:
         // std::cout << "MEET ASCLEPIUS\n";
         // 0 beacause do not meet MUSH GHOST
-        int *item_19;
-        item_19 = get_item(file_asclepius_pack, event_id, 0);
-        // cout<<"Remedy:"<<*(item_19+1)<<endl;
-        // cout<<"MaidenKiss:"<<*(item_19+2)<<endl;
-        // cout<<"PhoenixDown:"<<*(item_19+3)<<endl;
-
-        increaseRemedy(knight, *(item_19 + 1));
-        increaseMaidenKiss(knight, *(item_19 + 2));
-        increasePhoenixDown(knight, *(item_19 + 3));
+        get_item(item, 4, file_asclepius_pack, event_id, 0);
+        // cout<<"Remedy:"<<*(item+1)<<endl;
+        // cout<<"MaidenKiss:"<<*(item+2)<<endl;
+        // cout<<"PhoenixDown:"<<*(item+3)<<endl;
+        increaseRemedy(knight, item[1]);
+        increaseMaidenKiss(knight, item[2]);
+        increasePhoenixDown(knight, item[3]);
         break;
 
     case BOWSER:
@@ -593,7 +588,7 @@ int *get_pos(string file_array_string)
     // 3 is the number of line in file
     string line;
     ifstream myfile(file_array_string);
-    int *pos_line = new (nothrow) int;
+    int *pos_line = new int[MAX];
     int i = 0;
     if (myfile.is_open())
     {
@@ -604,6 +599,7 @@ int *get_pos(string file_array_string)
             i++;
             pos = myfile.tellg();
         }
+        myfile.seekg(0); // set file pointer to the beginning of the file
         myfile.close();
     }
     else
@@ -637,6 +633,7 @@ void import(string file_array_string, int *knight_address, int *&event, int &num
             }
             pos = myfile.tellg(); // end pos in a line
         }
+        myfile.seekg(0); // set file pointer to the beginning of the file
         myfile.close();
     }
     else
@@ -705,14 +702,12 @@ void extract_line_string(string line, string *array_address[], int array_length,
         line = line.substr(line_blank + 1, length - line_blank);
     }
 }
-int *get_item(string file_packet, int event, int mush_ghosh_type)
+void get_item(int *&item, int length, string file_packet, int event, int mush_ghosh_type)
 {
-    // HP increase,Remedy,Maidenkiss,Phoenix down
-    int *item = new int[4];
-    *item = 0;
-    *(item + 1) = 0;
-    *(item + 2) = 0;
-    *(item + 3) = 0;
+    for (int i = 0; i < length; i++)
+    {
+        item[i] = 0;
+    }
     int *pos_line = get_pos(file_packet);
     string line;
     ifstream myfile(file_packet);
@@ -720,6 +715,7 @@ int *get_item(string file_packet, int event, int mush_ghosh_type)
     int num_merlin;
     if (myfile.is_open())
     {
+
         int pos = myfile.tellg();
         while (getline(myfile, line))
         {
@@ -739,36 +735,37 @@ int *get_item(string file_packet, int event, int mush_ghosh_type)
             case ASCLEPIUS:
                 if (pos > pos_line[1])
                 {
+
                     if (countFreq(line, "16") >= 1)
                     {
                         if (countFreq(line, "16") - countFreq(line, "-16") <= 3)
                         {
-                            *(item + 1) += countFreq(line, "16");
-                            *(item + 1) -= countFreq(line, "-16");
+                            item[1] += countFreq(line, "16");
+                            item[1] -= countFreq(line, "-16");
                         }
                         else
-                            *(item + 1) += 3;
+                            item[1] += 3;
                     }
                     if (countFreq(line, "17") >= 1)
                     {
 
                         if (countFreq(line, "17") - countFreq(line, "-17") <= 3)
                         {
-                            *(item + 2) += countFreq(line, "17");
-                            *(item + 2) -= countFreq(line, "-17");
+                            item[2] += countFreq(line, "17");
+                            item[2] -= countFreq(line, "-17");
                         }
                         else
-                            *(item + 2) += 3;
+                            item[2] += 3;
                     }
                     if (countFreq(line, "18") >= 1)
                     {
                         if (countFreq(line, "18") - countFreq(line, "-18") <= 3)
                         {
-                            *(item + 3) += countFreq(line, "18");
-                            *(item + 3) -= countFreq(line, "-18");
+                            item[3] += countFreq(line, "18");
+                            item[3] -= countFreq(line, "-18");
                         }
                         else
-                            *(item + 3) += 3;
+                            item[3] += 3;
                     }
                 }
                 break;
@@ -793,12 +790,11 @@ int *get_item(string file_packet, int event, int mush_ghosh_type)
             }
             pos = myfile.tellg();
         }
-
+        myfile.seekg(0); // set file pointer to the beginning of the file
         myfile.close();
     }
     else
         cout << "Unable to open file";
-    return item;
 }
 // Subfunction for MUSH GHOST EVENT
 

@@ -108,7 +108,7 @@ void extract_line_num(string line, int *array_address, int array_length, string 
 int countFreq(string array_string, string array_char);
 void extract_line_string(string line, string *array_address[], int array_length, string delimeter);
 // EVENT interactive with file.
-int *get_item(string file_packet, int event, int mush_ghosh_type);
+void get_item(int*&item,int length,string file_packet, int event, int mush_ghosh_type);
 // MUSH GHOST EVENT
 int event_mush_ghost(int arr[],int length ,int type);
 void findMaxMin(int arr[],int length,int& maxIndex, int& minIndex);
