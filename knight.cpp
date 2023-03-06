@@ -518,9 +518,9 @@ int nearest_fibonacci(int num)
     while (true)
     {
         int fib = fibonacci(i);
-        if (num-fib<=0)
+        if (num - fib <= 0)
         {
-            return fibonacci(i-1); // found nearest Fibonacci number
+            return fibonacci(i - 1); // found nearest Fibonacci number
         }
         i++;
     }
@@ -743,54 +743,49 @@ void get_item(int *&item, int length, string file_packet, int event, int mush_gh
             case ASCLEPIUS:
                 if (pos > pos_line[1])
                 {
-
-                    if (countFreq(line, "16") >= 1)
-                    {
-                        if (countFreq(line, "16") - countFreq(line, "-16") <= 3)
-                        {
-                            item[1] += countFreq(line, "16");
-                            item[1] -= countFreq(line, "-16");
-                        }
-                        else
-                            item[1] += 3;
-                    }
-                    if (countFreq(line, "17") >= 1)
-                    {
-
-                        if (countFreq(line, "17") - countFreq(line, "-17") <= 3)
-                        {
-                            item[2] += countFreq(line, "17");
-                            item[2] -= countFreq(line, "-17");
-                        }
-                        else
-                            item[2] += 3;
-                    }
-                    if (countFreq(line, "18") >= 1)
-                    {
-                        if (countFreq(line, "18") - countFreq(line, "-18") <= 3)
-                        {
-                            item[3] += countFreq(line, "18");
-                            item[3] -= countFreq(line, "-18");
-                        }
-                        else
-                            item[3] += 3;
-                    }
+                    int item_count;
+                    item_count = 0;
+                    int size = countFreq(line, " ") + 1;
+                    int arr[size];
+                    extract_line_num(line, arr, size, " ");
+                        for (int i = 0; i < size; i++)
+                            {
+                                switch (arr[i])
+                                {
+                                case 16:
+                                    item[1]++;
+                                    item_count++;
+                                    break;
+                                case 17:
+                                    item[2]++;
+                                    item_count++;
+                                    break;
+                                case 18:
+                                    item[3]++;
+                                    item_count++;
+                                    break;
+                                default:
+                                    break;
+                                }
+                                if (item_count>= 3 )
+                                    break;
+                            }
                 }
                 break;
             case MERLIN:
                 for (int i = 0; i < line.length(); i++)
                 {
-                    line[i] = tolower(line[i]);
+                        line[i] = tolower(line[i]);
                 }
                 num_merlin = countFreq(line, "m") + countFreq(line, "e") + countFreq(line, "r") + countFreq(line, "l") + countFreq(line, "i") + countFreq(line, "n");
                 // num_merlin=6 that mean in string have full character of merlin
                 if (num_merlin >= 6)
                 {
-                    *item += 2;
-                    if (countFreq(line, "merlin") == 1 || countFreq(line, "Merlin") == 1)
-                    {
-                        *item += 1;
-                    }
+                        *item += 2;
+                        if (countFreq(line, "merlin") == 1 || countFreq(line, "Merlin") == 1)
+                        {
+                            *item += 1;
+                        }
                 }
                 break;
             default:

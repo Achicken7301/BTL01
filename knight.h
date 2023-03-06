@@ -75,7 +75,7 @@ typedef struct knight
 } knight;
 
 void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &maidenkiss, int &phoenixdown, int &rescue);
-void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue);
+// void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue);
 void display(knight *knight);
 void knightMeetsEvent(int *event_index, int event_id, knight *knight);
 
