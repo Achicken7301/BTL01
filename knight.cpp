@@ -518,9 +518,9 @@ int nearest_fibonacci(int num)
     while (true)
     {
         int fib = fibonacci(i);
-        if (std::abs(fib - num) < std::abs(fibonacci(i + 1) - num))
+        if (num-fib<=0)
         {
-            return fib; // found nearest Fibonacci number
+            return fibonacci(i-1); // found nearest Fibonacci number
         }
         i++;
     }
