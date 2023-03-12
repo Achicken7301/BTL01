@@ -36,9 +36,9 @@ typedef struct enemy
     float realDamge;
 } enemy;
 
-#define NORMAL 70
-#define TINY 71
-#define FROG 72
+#define NORMAL 30
+#define TINY 31
+#define FROG 32
 #define ARTHUR 73
 #define LANCELOT 74
 

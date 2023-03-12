@@ -65,9 +65,11 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
             if (knight1.tiny_lasted == 0)
             {
                 if (knight1.id==TINY)
+                {
                     increaseHP(&knight1,4*knight1.HP);
                     knight1.id=NORMAL;
-                if (knight1.id=FROG)
+                }
+                if (knight1.id==FROG)
                 {
                     knight1.level=knight1.before_turn_frog_level;
                     knight1.id=NORMAL;
