@@ -111,7 +111,9 @@ void extract_line_string(string line, string *array_address[], int array_length,
 void get_item(int*&item,int length,string file_packet, int event, int mush_ghosh_type);
 // MUSH GHOST EVENT
 int event_mush_ghost(int arr[],int length ,int type);
-void findMaxMin(int arr[],int length,int& maxIndex, int& minIndex);
+#define LAST -1
+#define FIRST 1
+void findMaxMin(int arr[],int length,int& maxIndex, int& minIndex,int option);
 int findSecondMax(int arr[], int length);
 int findMountainArray(int arr[], int length);
 void relocate(int*&arr,int count);

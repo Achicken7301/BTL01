@@ -64,8 +64,15 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
             // printf("knight1.tiny_lasted: %d\n", knight1.tiny_lasted);
             if (knight1.tiny_lasted == 0)
             {
-                // printf("Tiny no longer, turn back to normal health x 5\n");
-                knight1.HP *= 5;
+                if (knight1.id==TINY)
+                    increaseHP(&knight1,4*knight1.HP);
+                    knight1.id=NORMAL;
+                if (knight1.id=FROG)
+                {
+                    knight1.level=knight1.before_turn_frog_level;
+                    knight1.id=NORMAL;
+                }
+
             }
         }
 
@@ -418,7 +425,7 @@ void useRemedy(knight *knight)
     // printf("knight uses remedy\n");
     knight->remedy--;
     knight->id = NORMAL; // normal condition
-    knight->HP *= 5;
+    increaseHP(knight,4*knight->HP);
     knight->tiny_lasted = 0;
 }
 
@@ -748,44 +755,44 @@ void get_item(int *&item, int length, string file_packet, int event, int mush_gh
                     int size = countFreq(line, " ") + 1;
                     int arr[size];
                     extract_line_num(line, arr, size, " ");
-                        for (int i = 0; i < size; i++)
-                            {
-                                switch (arr[i])
-                                {
-                                case 16:
-                                    item[1]++;
-                                    item_count++;
-                                    break;
-                                case 17:
-                                    item[2]++;
-                                    item_count++;
-                                    break;
-                                case 18:
-                                    item[3]++;
-                                    item_count++;
-                                    break;
-                                default:
-                                    break;
-                                }
-                                if (item_count>= 3 )
-                                    break;
-                            }
+                    for (int i = 0; i < size; i++)
+                    {
+                        switch (arr[i])
+                        {
+                        case 16:
+                            item[1]++;
+                            item_count++;
+                            break;
+                        case 17:
+                            item[2]++;
+                            item_count++;
+                            break;
+                        case 18:
+                            item[3]++;
+                            item_count++;
+                            break;
+                        default:
+                            break;
+                        }
+                        if (item_count >= 3)
+                            break;
+                    }
                 }
                 break;
             case MERLIN:
                 for (int i = 0; i < line.length(); i++)
                 {
-                        line[i] = tolower(line[i]);
+                    line[i] = tolower(line[i]);
                 }
                 num_merlin = countFreq(line, "m") + countFreq(line, "e") + countFreq(line, "r") + countFreq(line, "l") + countFreq(line, "i") + countFreq(line, "n");
                 // num_merlin=6 that mean in string have full character of merlin
                 if (num_merlin >= 6)
                 {
-                        *item += 2;
-                        if (countFreq(line, "merlin") == 1 || countFreq(line, "Merlin") == 1)
-                        {
-                            *item += 1;
-                        }
+                    *item += 2;
+                    if (countFreq(line, "merlin") == 1 || countFreq(line, "Merlin") == 1)
+                    {
+                        *item += 1;
+                    }
                 }
                 break;
             default:
@@ -821,18 +828,34 @@ int findMountainArray(int arr[], int length)
         }
     return peak;
 }
-void findMaxMin(int arr[], int length, int &maxIndex, int &minIndex)
+void findMaxMin(int arr[], int length, int &maxIndex, int &minIndex, int option)
 {
     int max_min[2];
     int i_max = 0;
     int i_min = 0;
-    for (int i = 0; i < length; i++)
+    switch (option)
     {
-        if (arr[i] >= arr[i_max])
-            i_max = i;
-        if (arr[i] <= arr[i_min])
-            i_min = i;
+    case LAST:
+        for (int i = 0; i < length; i++)
+        {
+            if (arr[i] >= arr[i_max])
+                i_max = i;
+            if (arr[i] <= arr[i_min])
+                i_min = i;
+        }
+        break;
+    case FIRST:
+        for (int i = 0; i < length; i++)
+        {
+            if (arr[i] > arr[i_max])
+                i_max = i;
+            if (arr[i] < arr[i_min])
+                i_min = i;
+        }
+    default:
+        break;
     }
+
     maxIndex = i_max;
     minIndex = i_min;
 }
@@ -840,7 +863,7 @@ void findMaxMin(int arr[], int length, int &maxIndex, int &minIndex)
 int findSecondMax(int arr[], int n)
 {
     int i_max, i_secondmax;
-    findMaxMin(arr, n, i_max, i_secondmax);
+    findMaxMin(arr, n, i_max, i_secondmax, LAST);
     for (int i = 0; i < n; i++)
     {
         if (arr[i] != arr[i_max] && arr[i] > arr[i_secondmax])
@@ -867,7 +890,7 @@ int event_mush_ghost(int arr[], int length, int type)
     switch (type)
     {
     case MUSH_GHOST_1:
-        findMaxMin(arr, length, min, max);
+        findMaxMin(arr, length, min, max, LAST);
         HP_change = -(max + min);
         break;
     case MUSH_GHOST_2:
@@ -884,7 +907,7 @@ int event_mush_ghost(int arr[], int length, int type)
             arr[i] = abs(arr[i]);
             arr[i] = (17 * arr[i] + 9) % 257;
         }
-        findMaxMin(arr, length, max, min);
+        findMaxMin(arr, length, max, min, FIRST);
         HP_change = -(max + min);
         break;
     case MUSH_GHOST_4:
