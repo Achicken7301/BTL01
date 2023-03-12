@@ -36,9 +36,9 @@ typedef struct enemy
     float realDamge;
 } enemy;
 
-#define NORMAL 70
-#define TINY 71
-#define FROG 72
+#define NORMAL 30
+#define TINY 31
+#define FROG 32
 #define ARTHUR 73
 #define LANCELOT 74
 
@@ -75,7 +75,7 @@ typedef struct knight
 } knight;
 
 void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &maidenkiss, int &phoenixdown, int &rescue);
-void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue);
+// void display(int HP, int level, int remedy, int maidenkiss, int phoenixdown, int rescue);
 void display(knight *knight);
 void knightMeetsEvent(int *event_index, int event_id, knight *knight);
 
@@ -111,7 +111,9 @@ void extract_line_string(string line, string *array_address[], int array_length,
 void get_item(int*&item,int length,string file_packet, int event, int mush_ghosh_type);
 // MUSH GHOST EVENT
 int event_mush_ghost(int arr[],int length ,int type);
-void findMaxMin(int arr[],int length,int& maxIndex, int& minIndex);
+#define LAST -1
+#define FIRST 1
+void findMaxMin(int arr[],int length,int& maxIndex, int& minIndex,int option);
 int findSecondMax(int arr[], int length);
 int findMountainArray(int arr[], int length);
 void relocate(int*&arr,int count);

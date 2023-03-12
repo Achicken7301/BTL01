@@ -64,8 +64,17 @@ void adventureToKoopa(string file_input, int &HP, int &level, int &remedy, int &
             // printf("knight1.tiny_lasted: %d\n", knight1.tiny_lasted);
             if (knight1.tiny_lasted == 0)
             {
-                // printf("Tiny no longer, turn back to normal health x 5\n");
-                knight1.HP *= 5;
+                if (knight1.id==TINY)
+                {
+                    increaseHP(&knight1,4*knight1.HP);
+                    knight1.id=NORMAL;
+                }
+                if (knight1.id==FROG)
+                {
+                    knight1.level=knight1.before_turn_frog_level;
+                    knight1.id=NORMAL;
+                }
+
             }
         }
 
@@ -418,7 +427,7 @@ void useRemedy(knight *knight)
     // printf("knight uses remedy\n");
     knight->remedy--;
     knight->id = NORMAL; // normal condition
-    knight->HP *= 5;
+    increaseHP(knight,4*knight->HP);
     knight->tiny_lasted = 0;
 }
 
@@ -518,9 +527,9 @@ int nearest_fibonacci(int num)
     while (true)
     {
         int fib = fibonacci(i);
-        if (std::abs(fib - num) < std::abs(fibonacci(i + 1) - num))
+        if (num - fib <= 0)
         {
-            return fib; // found nearest Fibonacci number
+            return fibonacci(i - 1); // found nearest Fibonacci number
         }
         i++;
     }
@@ -532,6 +541,14 @@ void increaseHP(knight *knight, int HP_increase)
     if (knight->HP > knight->MAX_HP)
     {
         knight->HP = knight->MAX_HP;
+    }
+    if (knight->HP <= 0)
+    {
+        if (knight->phoenixdown > 0)
+        {
+            usePhoenixDown(knight);
+            knight->rescue = NOT_OVER;
+        }
     }
 }
 
@@ -735,37 +752,32 @@ void get_item(int *&item, int length, string file_packet, int event, int mush_gh
             case ASCLEPIUS:
                 if (pos > pos_line[1])
                 {
-
-                    if (countFreq(line, "16") >= 1)
+                    int item_count;
+                    item_count = 0;
+                    int size = countFreq(line, " ") + 1;
+                    int arr[size];
+                    extract_line_num(line, arr, size, " ");
+                    for (int i = 0; i < size; i++)
                     {
-                        if (countFreq(line, "16") - countFreq(line, "-16") <= 3)
+                        switch (arr[i])
                         {
-                            item[1] += countFreq(line, "16");
-                            item[1] -= countFreq(line, "-16");
+                        case 16:
+                            item[1]++;
+                            item_count++;
+                            break;
+                        case 17:
+                            item[2]++;
+                            item_count++;
+                            break;
+                        case 18:
+                            item[3]++;
+                            item_count++;
+                            break;
+                        default:
+                            break;
                         }
-                        else
-                            item[1] += 3;
-                    }
-                    if (countFreq(line, "17") >= 1)
-                    {
-
-                        if (countFreq(line, "17") - countFreq(line, "-17") <= 3)
-                        {
-                            item[2] += countFreq(line, "17");
-                            item[2] -= countFreq(line, "-17");
-                        }
-                        else
-                            item[2] += 3;
-                    }
-                    if (countFreq(line, "18") >= 1)
-                    {
-                        if (countFreq(line, "18") - countFreq(line, "-18") <= 3)
-                        {
-                            item[3] += countFreq(line, "18");
-                            item[3] -= countFreq(line, "-18");
-                        }
-                        else
-                            item[3] += 3;
+                        if (item_count >= 3)
+                            break;
                     }
                 }
                 break;
@@ -818,18 +830,34 @@ int findMountainArray(int arr[], int length)
         }
     return peak;
 }
-void findMaxMin(int arr[], int length, int &maxIndex, int &minIndex)
+void findMaxMin(int arr[], int length, int &maxIndex, int &minIndex, int option)
 {
     int max_min[2];
     int i_max = 0;
     int i_min = 0;
-    for (int i = 0; i < length; i++)
+    switch (option)
     {
-        if (arr[i] > arr[i_max])
-            i_max = i;
-        if (arr[i] < arr[i_min])
-            i_min = i;
+    case LAST:
+        for (int i = 0; i < length; i++)
+        {
+            if (arr[i] >= arr[i_max])
+                i_max = i;
+            if (arr[i] <= arr[i_min])
+                i_min = i;
+        }
+        break;
+    case FIRST:
+        for (int i = 0; i < length; i++)
+        {
+            if (arr[i] > arr[i_max])
+                i_max = i;
+            if (arr[i] < arr[i_min])
+                i_min = i;
+        }
+    default:
+        break;
     }
+
     maxIndex = i_max;
     minIndex = i_min;
 }
@@ -837,7 +865,7 @@ void findMaxMin(int arr[], int length, int &maxIndex, int &minIndex)
 int findSecondMax(int arr[], int n)
 {
     int i_max, i_secondmax;
-    findMaxMin(arr, n, i_max, i_secondmax);
+    findMaxMin(arr, n, i_max, i_secondmax, LAST);
     for (int i = 0; i < n; i++)
     {
         if (arr[i] != arr[i_max] && arr[i] > arr[i_secondmax])
@@ -864,7 +892,7 @@ int event_mush_ghost(int arr[], int length, int type)
     switch (type)
     {
     case MUSH_GHOST_1:
-        findMaxMin(arr, length, min, max);
+        findMaxMin(arr, length, min, max, LAST);
         HP_change = -(max + min);
         break;
     case MUSH_GHOST_2:
@@ -881,7 +909,7 @@ int event_mush_ghost(int arr[], int length, int type)
             arr[i] = abs(arr[i]);
             arr[i] = (17 * arr[i] + 9) % 257;
         }
-        findMaxMin(arr, length, max, min);
+        findMaxMin(arr, length, max, min, FIRST);
         HP_change = -(max + min);
         break;
     case MUSH_GHOST_4:
